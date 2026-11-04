@@ -348,7 +348,7 @@ if uploaded_file is not None:
     # Display comparison table
     st.dataframe(
         comparison_df.round(4),
-        use_container_width=True,
+        width="stretch",
         hide_index=True
     )
 
