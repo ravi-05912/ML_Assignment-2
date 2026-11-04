@@ -35,10 +35,10 @@ The target labels are mapped as follows:
 ## 4. Data Preprocessing
 The following preprocessing workflow was applied:
 1. Separated the input features and target variable.
-2. Converted target labels into numerical values (`B` $\rightarrow$ `0`, `M` $\rightarrow$ `1`).
+2. Converted target labels into numerical values (B - 0, M - 1).
 3. Divided the dataset into **training (80%)** and **testing (20%)** sets.
-4. Used **stratified sampling** to preserve the original class distribution.
-5. Applied `StandardScaler` to Logistic Regression, KNN, and SVM within machine learning pipelines.
+4. Used stratified sampling to preserve the original class distribution.
+5. Applied StandardScaler to Logistic Regression, KNN, and SVM within machine learning pipelines.
 
 *Note: Decision Tree and Gaussian Naive Bayes models were trained without feature scaling. The training set contains 455 records, while the test set contains 114 records.*
 
