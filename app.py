@@ -249,116 +249,121 @@ if uploaded_file is not None:
     col5.metric("F1 Score", f"{f1:.4f}")
     col6.metric("MCC", f"{mcc:.4f}")
 
-
 # --------------------------------------------------
-# Confusion Matrix
-# --------------------------------------------------
-
-st.header("Confusion Matrix")
-
-cm = confusion_matrix(
-    y_test,
-    y_pred,
-    labels=[0, 1]
-)
-
-fig, ax = plt.subplots(figsize=(6, 4))
-
-display_cm = ConfusionMatrixDisplay(
-    confusion_matrix=cm,
-    display_labels=["Benign", "Malignant"]
-)
-
-display_cm.plot(
-    ax=ax,
-    cmap="Blues",
-    colorbar=False
-)
-
-st.pyplot(fig)
-
-plt.close(fig)
-
-
-# --------------------------------------------------
-# Classification Report
+# Confusion Matrix, Classification Report and Comparison
 # --------------------------------------------------
 
-st.header("Classification Report")
+if uploaded_file is not None:
 
-report = classification_report(
-    y_test,
-    y_pred,
-    labels=[0, 1],
-    target_names=["Benign", "Malignant"],
-    output_dict=True,
-    zero_division=0
-)
+    # --------------------------------------------------
+    # Confusion Matrix
+    # --------------------------------------------------
 
-report_df = pd.DataFrame(report).transpose()
+    st.header("Confusion Matrix")
 
-st.dataframe(report_df.round(4))
+    cm = confusion_matrix(
+        y_test,
+        y_pred,
+        labels=[0, 1]
+    )
 
+    fig, ax = plt.subplots(figsize=(6, 4))
 
-# --------------------------------------------------
-# Compare All Five Models
-# --------------------------------------------------
+    display_cm = ConfusionMatrixDisplay(
+        confusion_matrix=cm,
+        display_labels=["Benign", "Malignant"]
+    )
 
-st.header("Comparison of All Five Models")
+    display_cm.plot(
+        ax=ax,
+        cmap="Blues",
+        colorbar=False
+    )
 
-comparison_results = []
+    st.pyplot(fig)
 
-for model_name, model in models.items():
-
-    # Generate predictions
-    model_pred = model.predict(X_test)
-
-    # Obtain scores for AUC
-    if model_name == "SVM":
-        model_score = model.decision_function(X_test)
-    else:
-        model_score = model.predict_proba(X_test)[:, 1]
-
-    # Calculate metrics
-    comparison_results.append({
-        "Model": model_name,
-        "Accuracy": accuracy_score(y_test, model_pred),
-        "AUC": roc_auc_score(y_test, model_score),
-        "Precision": precision_score(
-            y_test, model_pred, pos_label=1, zero_division=0
-        ),
-        "Recall": recall_score(
-            y_test, model_pred, pos_label=1, zero_division=0
-        ),
-        "F1 Score": f1_score(
-            y_test, model_pred, pos_label=1, zero_division=0
-        ),
-        "MCC": matthews_corrcoef(y_test, model_pred)
-    })
+    plt.close(fig)
 
 
-# Convert comparison results into a DataFrame
-comparison_df = pd.DataFrame(comparison_results)
+    # --------------------------------------------------
+    # Classification Report
+    # --------------------------------------------------
 
-# Display comparison table
-st.dataframe(
-    comparison_df.round(4),
-    use_container_width=True,
-    hide_index=True
-)
+    st.header("Classification Report")
+
+    report = classification_report(
+        y_test,
+        y_pred,
+        labels=[0, 1],
+        target_names=["Benign", "Malignant"],
+        output_dict=True,
+        zero_division=0
+    )
+
+    report_df = pd.DataFrame(report).transpose()
+
+    st.dataframe(report_df.round(4))
 
 
-# --------------------------------------------------
-# Identify Best Performing Model
-# --------------------------------------------------
+    # --------------------------------------------------
+    # Compare All Five Models
+    # --------------------------------------------------
 
-best_model = comparison_df.loc[
-    comparison_df["F1 Score"].idxmax()
-]
+    st.header("Comparison of All Five Models")
 
-st.subheader("Best Performing Model (Based on F1 Score)")
+    comparison_results = []
 
-st.success(
-    f"{best_model['Model']} achieved the highest "
-    f"F1 Score of {best_model['F1 Score']:.4f}."
-)
+    for model_name, model in models.items():
+
+        # Generate predictions
+        model_pred = model.predict(X_test)
+
+        # Obtain scores for AUC
+        if model_name == "SVM":
+            model_score = model.decision_function(X_test)
+        else:
+            model_score = model.predict_proba(X_test)[:, 1]
+
+        # Calculate metrics
+        comparison_results.append({
+            "Model": model_name,
+            "Accuracy": accuracy_score(y_test, model_pred),
+            "AUC": roc_auc_score(y_test, model_score),
+            "Precision": precision_score(
+                y_test, model_pred, pos_label=1, zero_division=0
+            ),
+            "Recall": recall_score(
+                y_test, model_pred, pos_label=1, zero_division=0
+            ),
+            "F1 Score": f1_score(
+                y_test, model_pred, pos_label=1, zero_division=0
+            ),
+            "MCC": matthews_corrcoef(y_test, model_pred)
+        })
+
+
+    # Convert comparison results into a DataFrame
+    comparison_df = pd.DataFrame(comparison_results)
+
+    # Display comparison table
+    st.dataframe(
+        comparison_df.round(4),
+        use_container_width=True,
+        hide_index=True
+    )
+
+
+    # --------------------------------------------------
+    # Identify Best Performing Model
+    # --------------------------------------------------
+
+    best_model = comparison_df.loc[
+        comparison_df["F1 Score"].idxmax()
+    ]
+
+    st.subheader("Best Performing Model (Based on F1 Score)")
+
+    st.success(
+        f"{best_model['Model']} achieved the highest "
+        f"F1 Score of {best_model['F1 Score']:.4f}."
+    )
