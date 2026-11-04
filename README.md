@@ -97,7 +97,7 @@ An interactive Streamlit web application was developed to evaluate the trained m
 * Display the confusion matrix and full classification report.
 * Compare model performances side-by-side.
 
-*App Link:* [To be added after deployment]
+* **Live Application:** [Breast Cancer Classification Web App](https://ravi-05912-ml-assignment-2-app-hv4b0g.streamlit.app/)
 
 ## 11. Repository Structure
 ```text
