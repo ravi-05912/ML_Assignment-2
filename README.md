@@ -12,7 +12,7 @@ This project uses machine learning classification techniques to predict the diag
 
 *Note: Malignant is treated as the positive class during model evaluation.*
 
-## 3. Dataset Description
+## 3. Dataset Description & Exploratory Data Analysis (EDA)
 * **Dataset:** Breast Cancer Wisconsin (Diagnostic)
 * **Source:** UCI Machine Learning Repository
 * **Dataset URL:** [UCI Repository Link](https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic)
@@ -31,6 +31,38 @@ The dataset contains 30 numerical features describing characteristics such as ra
 The target labels are mapped as follows:
 * **Benign (B)** = `0`
 * **Malignant (M)** = `1`
+
+### Key EDA Insights
+
+1. **Data Quality:** The dataset is clean with 0 missing values and 0 duplicate rows, requiring no missing-value imputation.
+2. **Target Class Distribution:** The dataset is moderately imbalanced (62.74% Benign vs. 37.26% Malignant). While not extremely skewed, this imbalance necessitates **stratified sampling** to maintain representative class proportions across data splits.
+3. **Feature Scales & Distributions:** Histogram analyses showed varying numerical scales across features (e.g., mean radius vs. mean area), along with varying degrees of skewness. Distance- and gradient-based algorithms required feature scaling.
+4. **Multicollinearity:** Pearson correlation analysis revealed **21 feature pairs** with an absolute correlation $\vert{}r\vert{} > 0.90$. 
+   * *High-correlation examples:* `Mean radius` – `Mean perimeter` ($r = 0.998$), `Worst radius` – `Worst perimeter` ($r = 0.994$), `Mean radius` – `Mean area` ($r = 0.987$).
+   * *Strategy:* All 30 features were retained to establish a true baseline comparison; feature elimination/dimensionality reduction was omitted at this baseline stage to avoid losing predictive signal.
+
+## 4. Data Preprocessing & Methodology
+
+### 4.1 Train-Test Split (80:20 Ratio)
+The 569 records were split into **455 training records (80%)** and **114 testing records (20%)**. A fixed `random_state=42` was used to ensure total experimental reproducibility.
+
+### 4.2 Stratified Sampling Strategy
+Stratified sampling preserves the original target class proportions in both splits, preventing unrepresentative evaluation splits (e.g., test sets with too few malignant cases):
+
+| Dataset Split | Benign (Class 0) | Malignant (Class 1) | Total Records |
+| --- | :---: | :---: | :---: |
+| **Original Dataset** | 357 (62.74%) | 212 (37.26%) | 569 |
+| **Training Set (80%)** | 285 (62.64%) | 170 (37.36%) | 455 |
+| **Test Set (20%)** | 72 (63.16%) | 42 (36.84%) | 114 |
+
+### 4.3 Feature Scaling & Pipeline Integration
+Features were standardized using **`StandardScaler`**:
+
+$$z = \frac{x - \mu}{\sigma}$$
+
+* **Scaled Models (Logistic Regression, KNN, SVM):** Distance calculations (KNN), kernel computations (SVM), and gradient optimization/regularization (Logistic Regression) are sensitive to feature scales.
+* **Unscaled Models (Decision Tree, Gaussian Naive Bayes):** Tree-based splits are scale-invariant, and Naive Bayes independently estimates Gaussian distribution parameters per feature.
+* **Preventing Data Leakage:** `StandardScaler` was incorporated inside Scikit-learn **Pipelines**, ensuring the scaler fit solely on the training data ($\mu, \sigma$) and transformed test data without leakage.
 
 ## 4. Data Preprocessing
 The following preprocessing workflow was applied:
