@@ -64,15 +64,6 @@ $$z = \frac{x - \mu}{\sigma}$$
 * **Unscaled Models (Decision Tree, Gaussian Naive Bayes):** Tree-based splits are scale-invariant, and Naive Bayes independently estimates Gaussian distribution parameters per feature.
 * **Preventing Data Leakage:** StandardScaler was incorporated inside Scikit-learn **Pipelines**, ensuring the scaler fit solely on the training data ($\mu, \sigma$) and transformed test data without leakage.
 
-## 4. Data Preprocessing
-The following preprocessing workflow was applied:
-1. Separated the input features and target variable.
-2. Converted target labels into numerical values (B - 0, M - 1).
-3. Divided the dataset into **training (80%)** and **testing (20%)** sets.
-4. Used stratified sampling to preserve the original class distribution.
-5. Applied StandardScaler to Logistic Regression, KNN, and SVM within machine learning pipelines.
-
-*Note: Decision Tree and Gaussian Naive Bayes models were trained without feature scaling. The training set contains 455 records, while the test set contains 114 records.*
 
 ## 5. Machine Learning Models
 Five classification algorithms were implemented and trained:
